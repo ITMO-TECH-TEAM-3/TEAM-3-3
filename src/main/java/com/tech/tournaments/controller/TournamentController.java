@@ -16,7 +16,6 @@ public class TournamentController {
         this.tournamentService = tournamentService;
     }
 
-    // todo: remove
     /**
      * Test method
      *

@@ -1,7 +1,6 @@
 package com.tech.tournaments.service;
 
 public interface TournamentService {
-    // todo: remove
     /**
      * Test method
      *
