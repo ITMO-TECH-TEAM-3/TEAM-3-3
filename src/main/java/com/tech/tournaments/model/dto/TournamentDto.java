@@ -1,6 +1,6 @@
 package com.tech.tournaments.model.dto;
 
-import com.tech.tournaments.model.TournamentType;
+import com.tech.tournaments.model.enums.TournamentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +23,6 @@ public class TournamentDto {
      * Тип турнира
      */
     private TournamentType tournamentType;
-    /**
-     * Зарегистрированные команды
-     */
-    private List<UUID> teams;
     /**
      * Дата и время начала турнира
      */

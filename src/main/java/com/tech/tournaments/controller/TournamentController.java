@@ -21,10 +21,10 @@ public class TournamentController {
     /**
      * Создание турнира
      *
-     * @return ID созданного турнира
+     * @return созданная сущность турнира
      */
     @PostMapping
-    public UUID create(@RequestBody TournamentDto tournamentDto) {
+    public Tournament create(@RequestBody TournamentDto tournamentDto) {
         return this.tournamentService.createNewTournament(tournamentDto);
     }
 
