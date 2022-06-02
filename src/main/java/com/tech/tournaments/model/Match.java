@@ -1,14 +1,25 @@
 package com.tech.tournaments.model;
 
 import com.tech.tournaments.model.enums.MatchStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@Table(name = "match", schema = "public")
 public class Match {
     /**
      * id матча
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     /**
@@ -39,5 +50,6 @@ public class Match {
     /**
      * Статус матча
      */
+    @Enumerated(EnumType.STRING)
     private MatchStatus matchStatus;
 }
