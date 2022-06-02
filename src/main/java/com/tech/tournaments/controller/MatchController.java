@@ -29,7 +29,7 @@ public class MatchController {
      */
     @GetMapping("/{id}")
     public Match getMatchById(@PathVariable UUID id) {
-        return matchService.getMatchById(id);
+        return this.matchService.getMatchById(id);
     }
 
     /**
@@ -38,9 +38,9 @@ public class MatchController {
      * @param id - id матча
      * @return - информация о результате матча
      */
-    @GetMapping("/{id}/result")
+    @GetMapping("/by-match/{id}")
     public MatchResult getResultByMatchId(@PathVariable UUID id) {
-        return matchService.getResultByMatchId(id);
+        return this.matchService.getResultByMatchId(id);
     }
 
     /**
@@ -49,9 +49,9 @@ public class MatchController {
      * @param id - id результата
      * @return - информация о результате матча
      */
-    @GetMapping("/get-result-by-id")
-    public MatchResult getResultById(@RequestParam UUID id) {
-        return matchService.getResultById(id);
+    @GetMapping("/by-result/{id}")
+    public MatchResult getResultById(@PathVariable UUID id) {
+        return this.matchService.getResultById(id);
     }
 
     /**
@@ -62,7 +62,7 @@ public class MatchController {
      */
     @GetMapping("/get-by-date")
     public List<Match> getMatchesByDate(@RequestParam LocalDate date) {
-        return matchService.getMatchesByDate(date);
+        return this.matchService.getMatchesByDate(date);
     }
 
     /**
@@ -71,9 +71,9 @@ public class MatchController {
      * @param id - id турнира
      * @return - список матчей, проводимых в данном турнире
      */
-    @GetMapping("get-by-tournament-id")
+    @GetMapping("/get-by-tournament-id")
     public List<Match> getMatchesByTournamentId(@RequestParam UUID id) {
-        return matchService.getMatchesByTournamentId(id);
+        return this.matchService.getMatchesByTournamentId(id);
     }
 
     /**
@@ -85,6 +85,6 @@ public class MatchController {
     @PutMapping("/{id}/finish")
     public void finishMatch(@PathVariable UUID id,
                             @RequestBody MatchResultDto matchResultDto) {
-        matchService.finishMatch(id, matchResultDto);
+        this.matchService.finishMatch(id, matchResultDto);
     }
 }
