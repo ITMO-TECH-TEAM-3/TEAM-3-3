@@ -2,13 +2,13 @@ package com.tech.tournaments.service.impl;
 
 import com.tech.tournaments.model.Match;
 import com.tech.tournaments.model.MatchResult;
+import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
 import com.tech.tournaments.service.MatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +17,8 @@ import java.util.UUID;
 public class MatchServiceImpl implements MatchService {
 
     @Override
-    public Match createNewMatch(LocalDateTime startDateTime, UUID team1Id, UUID team2Id, int round) {
-        LOG.info("Create a new match: {}, {}, {}, {}", startDateTime, team1Id, team2Id, round);
+    public Match createNewMatch(MatchDto matchDto) {
+        LOG.info("Create a new match: {}", matchDto);
         // todo: implement logic
         return null;
     }

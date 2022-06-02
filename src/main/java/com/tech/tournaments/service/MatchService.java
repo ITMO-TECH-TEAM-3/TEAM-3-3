@@ -2,6 +2,7 @@ package com.tech.tournaments.service;
 
 import com.tech.tournaments.model.Match;
 import com.tech.tournaments.model.MatchResult;
+import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
 
 import java.time.LocalDate;
@@ -13,16 +14,10 @@ public interface MatchService {
     /**
      * Создание нового матча
      *
-     * @param startDateTime - начало матча
-     * @param team1Id - первая команда
-     * @param team2Id - вторая команда
-     * @param round - круг
+     * @param matchDto - информация о матче
      * @return - информация о матче
      */
-    Match createNewMatch(LocalDateTime startDateTime,
-                         UUID team1Id,
-                         UUID team2Id,
-                         int round);
+    Match createNewMatch(MatchDto matchDto);
 
     /**
      * Получение матча по id

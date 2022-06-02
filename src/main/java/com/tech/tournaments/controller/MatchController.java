@@ -28,7 +28,7 @@ public class MatchController {
      * @return - информация о матче
      */
     @GetMapping("/{id}")
-    public Match getInfo(@PathVariable UUID id) {
+    public Match getMatchById(@PathVariable UUID id) {
         return matchService.getMatchById(id);
     }
 
@@ -39,7 +39,7 @@ public class MatchController {
      * @return - информация о результате матча
      */
     @GetMapping("/{id}/result")
-    public MatchResult getResultInfoByMatchId(@PathVariable UUID id) {
+    public MatchResult getResultByMatchId(@PathVariable UUID id) {
         return matchService.getResultByMatchId(id);
     }
 
@@ -49,8 +49,8 @@ public class MatchController {
      * @param id - id результата
      * @return - информация о результате матча
      */
-    @GetMapping("/result/{id}")
-    public MatchResult getResultInfoByResultId(@PathVariable UUID id) {
+    @GetMapping("/get-result-by-id")
+    public MatchResult getResultById(@RequestParam UUID id) {
         return matchService.getResultById(id);
     }
 
