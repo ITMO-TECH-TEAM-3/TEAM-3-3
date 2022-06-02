@@ -9,9 +9,9 @@ public interface TournamentService {
     /**
      * Создание турнира
      *
-     * @return ID созданного турнира
+     * @return созданная сущность турнира
      */
-    UUID createNewTournament(TournamentDto tournamentDto);
+    Tournament createNewTournament(TournamentDto tournamentDto);
 
     /**
      * Получение турнира по ИД

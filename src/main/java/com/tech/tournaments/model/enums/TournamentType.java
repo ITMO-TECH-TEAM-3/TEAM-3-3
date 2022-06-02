@@ -1,4 +1,4 @@
-package com.tech.tournaments.model;
+package com.tech.tournaments.model.enums;
 
 public enum TournamentType {
     /**
