@@ -27,7 +27,7 @@ public class TeamRelationship {
      * Турнир
      */
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="tournament_id")
     private Tournament tournament;
 
