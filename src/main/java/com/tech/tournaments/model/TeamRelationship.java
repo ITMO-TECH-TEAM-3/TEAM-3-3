@@ -1,5 +1,6 @@
 package com.tech.tournaments.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +16,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name="teamrelationship", schema = "public")
 public class TeamRelationship {
+    /**
+     * ИД сущности
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne(targetEntity = Tournament.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn()
+    /**
+     * Турнир
+     */
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="tournament_id")
     private Tournament tournament;
+
+    /**
+     * ИД команды
+     */
     private UUID team;
 }
