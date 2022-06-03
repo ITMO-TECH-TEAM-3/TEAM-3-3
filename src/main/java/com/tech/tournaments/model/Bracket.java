@@ -1,6 +1,5 @@
 package com.tech.tournaments.model;
 
-import com.tech.tournaments.model.enums.TournamentStatus;
 import com.tech.tournaments.model.enums.TournamentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +12,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,39 +23,28 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="tournament", schema = "public")
-public class Tournament {
+@Table(name="bracket", schema = "public",
+        indexes = {@Index(columnList="tournamentId", unique = true)})
+public class Bracket {
     /**
-     * ИД турнира
+     * ИД сетки
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     /**
-     * ИД создателя
+     * ИД турнира
      */
-    private UUID creatorId;
+    private UUID tournamentId;
     /**
-     * Тип турнира
+     * Тип турнира (и сетки)
      */
     @Enumerated(EnumType.STRING)
     private TournamentType tournamentType;
-    /**
-     * Зарегистрированные команды
-     */
-    @OneToMany(mappedBy="tournament")
-    private List<TeamRelationship> teams;
-    /**
-     * Дата и время начала турнира
-     */
-    private LocalDateTime startDateTime;
-    /**
-     * Статус турнира
-     */
-    @Enumerated(EnumType.STRING)
-    private TournamentStatus tournamentStatus;
 
-    @OneToOne
-    @JoinColumn(name="bracket_id")
-    private Bracket bracket;
+    /**
+     * Список матчей
+     */
+    @OneToMany(mappedBy="bracket")
+    private List<Match> matches;
 }
