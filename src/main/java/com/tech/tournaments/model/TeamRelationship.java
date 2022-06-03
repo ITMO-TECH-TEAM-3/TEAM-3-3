@@ -1,10 +1,7 @@
 package com.tech.tournaments.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -26,6 +23,7 @@ public class TeamRelationship {
     /**
      * Турнир
      */
+    @ToString.Exclude
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="tournament_id")

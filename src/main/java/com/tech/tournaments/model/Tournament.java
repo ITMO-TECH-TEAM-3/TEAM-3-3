@@ -48,4 +48,8 @@ public class Tournament {
      */
     @Enumerated(EnumType.STRING)
     private TournamentStatus tournamentStatus;
+
+    @OneToOne
+    @JoinColumn(name="bracket_id")
+    private Bracket bracket;
 }

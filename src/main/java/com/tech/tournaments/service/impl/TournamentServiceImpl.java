@@ -6,6 +6,7 @@ import com.tech.tournaments.model.dto.TournamentDto;
 import com.tech.tournaments.model.enums.TournamentStatus;
 import com.tech.tournaments.repository.TeamRelationshipRepository;
 import com.tech.tournaments.repository.TournamentRepository;
+import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.TournamentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,18 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class TournamentServiceImpl implements TournamentService {
+
     private final TournamentRepository tournamentRepository;
     private final TeamRelationshipRepository teamRelationshipRepository;
+    private final BracketService bracketService;
 
     @Autowired
     public TournamentServiceImpl(TournamentRepository tournamentRepository,
-                                 TeamRelationshipRepository teamRelationshipRepository) {
+                                 TeamRelationshipRepository teamRelationshipRepository,
+                                 BracketService bracketService) {
         this.tournamentRepository = tournamentRepository;
         this.teamRelationshipRepository = teamRelationshipRepository;
+        this.bracketService = bracketService;
     }
 
     /**
@@ -89,6 +94,7 @@ public class TournamentServiceImpl implements TournamentService {
         var entity = getTournamentById(id);
         entity.setTournamentStatus(TournamentStatus.ONGOING);
         this.tournamentRepository.save(entity);
+        this.bracketService.generateBracketForTournament(entity);
     }
 
     /**
