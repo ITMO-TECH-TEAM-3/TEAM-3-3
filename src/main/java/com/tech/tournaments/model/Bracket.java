@@ -1,20 +1,10 @@
 package com.tech.tournaments.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tech.tournaments.model.enums.TournamentType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="bracket", schema = "public",
-        indexes = {@Index(columnList="tournamentId", unique = true)})
+        indexes = {@Index(columnList="tournament_id", unique = true)})
 public class Bracket {
     /**
      * ИД сетки
@@ -35,7 +25,11 @@ public class Bracket {
     /**
      * ИД турнира
      */
-    private UUID tournamentId;
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="tournament_id")
+    private Tournament tournament;
     /**
      * Тип турнира (и сетки)
      */
