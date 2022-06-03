@@ -4,6 +4,7 @@ import com.tech.tournaments.model.Match;
 import com.tech.tournaments.model.MatchResult;
 import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
+import com.tech.tournaments.model.enums.MatchStatus;
 import com.tech.tournaments.repository.MatchRepository;
 import com.tech.tournaments.service.MatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class MatchServiceImpl implements MatchService {
                 .team2Id(matchDto.getTeam2Id())
                 .startDateTime(matchDto.getStartDateTime())
                 .bracket(matchDto.getBracket())
+                .matchStatus(MatchStatus.PENDING)
                 .build();
         return this.matchRepository.save(match);
     }
