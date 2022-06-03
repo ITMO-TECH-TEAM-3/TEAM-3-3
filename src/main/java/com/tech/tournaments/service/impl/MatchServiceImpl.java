@@ -4,8 +4,10 @@ import com.tech.tournaments.model.Match;
 import com.tech.tournaments.model.MatchResult;
 import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
+import com.tech.tournaments.repository.MatchRepository;
 import com.tech.tournaments.service.MatchService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,13 +18,32 @@ import java.util.UUID;
 @Slf4j
 public class MatchServiceImpl implements MatchService {
 
-    @Override
-    public Match createNewMatch(MatchDto matchDto) {
-        LOG.info("Create a new match: {}", matchDto);
-        // todo: implement logic
-        return null;
+    private final MatchRepository matchRepository;
+
+    @Autowired
+    public MatchServiceImpl(MatchRepository matchRepository)
+    {
+        this.matchRepository = matchRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Match createNewMatch(MatchDto matchDto) {
+        LOG.info("Create a new match: {}", matchDto);
+        var match = Match.builder()
+                .round(matchDto.getRound())
+                .team1Id(matchDto.getTeam1Id())
+                .team2Id(matchDto.getTeam2Id())
+                .startDateTime(matchDto.getStartDateTime())
+                .bracket(matchDto.getBracket())
+                .build();
+        return this.matchRepository.save(match);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Match getMatchById(UUID id) {
         LOG.info("Get match by id {}", id);
@@ -30,6 +51,9 @@ public class MatchServiceImpl implements MatchService {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Match> getMatchesByDate(LocalDate date) {
         LOG.info("Get matches by date {}", date);
@@ -37,6 +61,9 @@ public class MatchServiceImpl implements MatchService {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Match> getMatchesByTournamentId(UUID id) {
         LOG.info("Get matches by tournament id {}", id);
@@ -44,6 +71,9 @@ public class MatchServiceImpl implements MatchService {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MatchResult getResultById(UUID id) {
         LOG.info("Get result by id {}", id);
@@ -51,6 +81,9 @@ public class MatchServiceImpl implements MatchService {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MatchResult getResultByMatchId(UUID matchId) {
         LOG.info("Get result by match id {}", matchId);
@@ -58,12 +91,18 @@ public class MatchServiceImpl implements MatchService {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startMatch(UUID id) {
         LOG.info("Start a match {}", id);
         // todo: implement logic
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void finishMatch(UUID id, MatchResultDto matchResultDto) {
         LOG.info("Finish a match {}, {}", id, matchResultDto);

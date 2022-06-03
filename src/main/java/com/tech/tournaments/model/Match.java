@@ -1,11 +1,22 @@
 package com.tech.tournaments.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tech.tournaments.model.enums.MatchStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,6 +24,7 @@ import java.util.UUID;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "match", schema = "public")
 public class Match {
     /**
@@ -52,4 +64,13 @@ public class Match {
      */
     @Enumerated(EnumType.STRING)
     private MatchStatus matchStatus;
+
+    /**
+     * Сетка
+     */
+    @ToString.Exclude
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="bracket_id")
+    private Bracket bracket;
 }
