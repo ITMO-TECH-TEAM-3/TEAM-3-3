@@ -10,5 +10,5 @@ public interface BracketService {
      * @return сетка
      */
     Bracket generateBracketForTournament(Tournament tournament);
-    Bracket generateNewRoundForTournament(Tournament tournament, Bracket bracket);
+    void generateNewRoundForTournament(Tournament tournament, Bracket bracket);
 }

@@ -48,20 +48,23 @@ public class BracketServiceImpl implements BracketService {
      * todo: think of whether its public or private
      */
     @Override
-    public Bracket generateNewRoundForTournament(Tournament tournament, Bracket bracket) {
+    public void generateNewRoundForTournament(Tournament tournament, Bracket bracket) {
         int round = bracket.getMatches().stream().map(Match::getRound).max(Integer::compareTo).orElseThrow();
         var winners = bracket.getMatches().stream()
                 .filter(m -> (m.getRound() == round)).map(Match::getResult)
                 .map(MatchResult::getWinnerId).collect(Collectors.toList());
+        if (bracket.getTournamentType() == TournamentType.ROUND_ROBIN) {
+            LOG.info("call tournament.finish()");
+            return;
+        }
         if (winners.size() == 1) {
             LOG.info("call tournament.finish()");
-            return null;
+            return;
         }
-        else if (winners.size() % 2 != 0) {
+        if (winners.size() % 2 != 0) {
             // todo: change error message
             throw new RuntimeException("why tho");
-        }
-        else {
+        } else {
             if (bracket.getTournamentType() == TournamentType.SINGLE_ELIMINATION) {
                 for (int i = 0; i < winners.size() - 1; i += 2) {
                     var matchDto = MatchDto.builder()
@@ -74,7 +77,6 @@ public class BracketServiceImpl implements BracketService {
                 }
             }
         }
-        return bracket;
     }
 
     /**
