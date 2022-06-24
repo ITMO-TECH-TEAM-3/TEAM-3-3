@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(url = "${service.bets.url:}")
+@FeignClient(name="bets", url = "${service.bets.url:}")
 public interface BetsFeign
 {
     /**
@@ -22,6 +22,6 @@ public interface BetsFeign
      *
      * @param tournamentResult информация о результате турнира
      */
-    @PostMapping("/results/match")
+    @PostMapping("/results/tournament")
     void sendTournamentResult(@RequestBody TournamentResult tournamentResult);
 }
