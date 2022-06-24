@@ -52,9 +52,9 @@ public interface TournamentService {
     void cancelTournament(UUID id);
 
     /**
-     * Завершение турнира
+     * Обновление турнира по завершении всех текущих матчей
      *
      * @param id - ид турнира
      */
-    void finishTournament(UUID id);
+    void processNewRound(UUID id);
 }

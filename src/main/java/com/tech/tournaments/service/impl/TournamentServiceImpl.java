@@ -133,7 +133,16 @@ public class TournamentServiceImpl implements TournamentService {
      * {@inheritDoc}
      */
     @Override
-    public void finishTournament(UUID id) {
+    public void processNewRound(UUID id) {
+        var tournament = getTournamentById(id);
+        var newRoundsGenerated = this.bracketService.generateNewRoundForTournament(tournament);
+        if (!newRoundsGenerated)
+        {
+            finishTournament(id);
+        }
+    }
+
+    private void finishTournament(UUID id) {
         LOG.info("Finish tournament by id: {}", id);
         var entity = getTournamentById(id);
         if (entity.getTournamentStatus() == CANCELLED || entity.getTournamentStatus() == FINISHED) {
@@ -168,7 +177,8 @@ public class TournamentServiceImpl implements TournamentService {
         } else if (tournament.getTournamentType() == SINGLE_ELIMINATION) {
             winner = matches.stream()
                     .max(Comparator.comparing(Match::getRound))
-                    .map(Match::getResultId)
+                    .map(Match::getResult)
+                    .map(MatchResult::getId)
                     .map(this.matchService::getResultByMatchId)
                     .map(MatchResult::getWinnerId);
         }

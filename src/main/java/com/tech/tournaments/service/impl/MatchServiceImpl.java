@@ -134,7 +134,7 @@ public class MatchServiceImpl implements MatchService {
                 .map(Match::getMatchStatus)
                 .allMatch(r -> r == FINISHED || r == CANCELLED);
         if (allMatchesFinished) {
-            this.tournamentService.finishTournament(bracket.getTournament().getId());
+            this.tournamentService.processNewRound(match.getBracket().getTournament().getId());
         }
     }
 
@@ -142,7 +142,7 @@ public class MatchServiceImpl implements MatchService {
     {
         LOG.info("Create result for match: {}", matchId);
         var matchResult = MatchResult.builder()
-                .matchId(matchId)
+                .id(matchId)
                 .isDraw(matchResultDto.isDraw())
                 .score1(matchResultDto.getScore1())
                 .score2(matchResultDto.getScore2())
