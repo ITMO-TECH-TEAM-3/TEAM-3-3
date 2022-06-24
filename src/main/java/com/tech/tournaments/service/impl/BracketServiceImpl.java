@@ -1,14 +1,19 @@
 package com.tech.tournaments.service.impl;
 
 import com.tech.tournaments.model.Bracket;
+import com.tech.tournaments.model.Match;
+import com.tech.tournaments.model.MatchResult;
 import com.tech.tournaments.model.Tournament;
 import com.tech.tournaments.model.dto.MatchDto;
+import com.tech.tournaments.model.enums.TournamentType;
 import com.tech.tournaments.repository.BracketRepository;
 import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.MatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,6 +41,39 @@ public class BracketServiceImpl implements BracketService {
                 .build();
         bracket = this.bracketRepository.save(bracket);
         createMatches(tournament, bracket);
+        return bracket;
+    }
+
+    /*
+     * todo: think of whether its public or private
+     */
+    @Override
+    public Bracket generateNewRoundForTournament(Tournament tournament, Bracket bracket) {
+        int round = bracket.getMatches().stream().map(Match::getRound).max(Integer::compareTo).orElseThrow();
+        var winners = bracket.getMatches().stream()
+                .filter(m -> (m.getRound() == round)).map(Match::getResult)
+                .map(MatchResult::getWinnerId).collect(Collectors.toList());
+        if (winners.size() == 1) {
+            LOG.info("call tournament.finish()");
+            return null;
+        }
+        else if (winners.size() % 2 != 0) {
+            // todo: change error message
+            throw new RuntimeException("why tho");
+        }
+        else {
+            if (bracket.getTournamentType() == TournamentType.SINGLE_ELIMINATION) {
+                for (int i = 0; i < winners.size() - 1; i += 2) {
+                    var matchDto = MatchDto.builder()
+                            .round(round + 1)
+                            .team1Id(winners.get(i))
+                            .team2Id(winners.get(i + 1))
+                            .bracket(bracket)
+                            .build();
+                    this.matchService.createNewMatch(matchDto);
+                }
+            }
+        }
         return bracket;
     }
 
