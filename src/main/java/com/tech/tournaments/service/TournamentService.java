@@ -50,4 +50,11 @@ public interface TournamentService {
      * @param id - ид турнира
      */
     void cancelTournament(UUID id);
+
+    /**
+     * Завершение турнира
+     *
+     * @param id - ид турнира
+     */
+    void finishTournament(UUID id);
 }
