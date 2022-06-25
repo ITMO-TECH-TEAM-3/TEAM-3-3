@@ -13,19 +13,14 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "matchresult", schema = "public")
-public class MatchResult {
+@Table(name = "tournamentresult", schema = "public")
+public class TournamentResult {
     /**
-     * id результата матча
+     * id результата турнира
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    /**
-     * Ничья
-     */
-    private boolean isDraw;
 
     /**
      * id победителя
@@ -33,19 +28,7 @@ public class MatchResult {
     private UUID winnerId;
 
     /**
-     * id матча
+     * id турнира
      */
-    @OneToOne
-    @JoinColumn(name="match_id")
-    private Match match;
-
-    /**
-     * счёт первой команды
-     */
-    private int score1;
-
-    /**
-     * счёт второй команды
-     */
-    private int score2;
+    private UUID tournamentId;
 }

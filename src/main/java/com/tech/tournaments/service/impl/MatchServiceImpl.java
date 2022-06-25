@@ -8,8 +8,11 @@ import com.tech.tournaments.model.enums.MatchStatus;
 import com.tech.tournaments.repository.MatchRepository;
 import com.tech.tournaments.repository.MatchResultRepository;
 import com.tech.tournaments.service.MatchService;
+import com.tech.tournaments.service.TournamentService;
+import com.tech.tournaments.service.feign.BetsFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,18 +20,27 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.tech.tournaments.model.enums.MatchStatus.CANCELLED;
+import static com.tech.tournaments.model.enums.MatchStatus.FINISHED;
+
 @Service
 @Slf4j
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
     private final MatchResultRepository matchResultRepository;
+    private final TournamentService tournamentService;
+    private final BetsFeign betsFeign;
 
     @Autowired
-    public MatchServiceImpl(MatchRepository matchRepository, MatchResultRepository matchResultRepository)
-    {
+    public MatchServiceImpl(MatchRepository matchRepository,
+                            @Lazy TournamentService tournamentService,
+                            MatchResultRepository matchResultRepository,
+                            BetsFeign betsFeign) {
         this.matchRepository = matchRepository;
+        this.tournamentService = tournamentService;
         this.matchResultRepository = matchResultRepository;
+        this.betsFeign = betsFeign;
     }
 
     /**
@@ -125,6 +137,31 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public void finishMatch(UUID id, MatchResultDto matchResultDto) {
         LOG.info("Finish a match {}, {}", id, matchResultDto);
-        // todo: implement logic
+        var match = getMatchById(id);
+        var bracket = match.getBracket();
+
+        var matchResult = createMatchResult(id, matchResultDto);
+        betsFeign.sendMatchResult(matchResult);
+
+        var allMatchesFinished = bracket.getMatches()
+                .stream()
+                .map(Match::getMatchStatus)
+                .allMatch(r -> r == FINISHED || r == CANCELLED);
+        if (allMatchesFinished) {
+            this.tournamentService.processNewRound(match.getBracket().getTournament().getId());
+        }
+    }
+
+    private MatchResult createMatchResult(UUID matchId, MatchResultDto matchResultDto)
+    {
+        LOG.info("Create result for match: {}", matchId);
+        var matchResult = MatchResult.builder()
+                .id(matchId)
+                .isDraw(matchResultDto.isDraw())
+                .score1(matchResultDto.getScore1())
+                .score2(matchResultDto.getScore2())
+                .winnerId(matchResultDto.getWinnerId())
+                .build();
+        return matchResultRepository.save(matchResult);
     }
 }
