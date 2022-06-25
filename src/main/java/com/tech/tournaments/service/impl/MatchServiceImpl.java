@@ -60,7 +60,7 @@ public class MatchServiceImpl implements MatchService {
         try {
             return this.matchRepository.save(match);
         } catch (Exception e) {
-            LOG.error("Failed to create tournament: {}", e.getMessage());
+            LOG.error("Failed to create match: {}", e.getMessage());
             throw e;
         }
     }
@@ -118,7 +118,8 @@ public class MatchServiceImpl implements MatchService {
         return this.matchResultRepository.findById(
                 this.matchRepository.findById(matchId)
                         .orElseThrow()
-                        .getResultId())
+                        .getResult()
+                        .getId())
                 .orElseThrow();
     }
 
