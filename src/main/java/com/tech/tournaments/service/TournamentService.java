@@ -3,6 +3,7 @@ package com.tech.tournaments.service;
 import com.tech.tournaments.model.Tournament;
 import com.tech.tournaments.model.dto.TournamentDto;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface TournamentService {
@@ -57,4 +58,12 @@ public interface TournamentService {
      * @param id - ид турнира
      */
     void processNewRound(UUID id);
+
+    /**
+     * Получение информации о командах по ИД
+     *
+     * @param id - ид турнира
+     * @return - информация о командах в турнире
+     */
+    List<UUID> getTournamentTeamsById(UUID id);
 }

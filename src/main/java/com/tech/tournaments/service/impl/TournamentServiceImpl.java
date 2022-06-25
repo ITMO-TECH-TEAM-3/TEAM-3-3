@@ -16,10 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tech.tournaments.model.enums.TournamentStatus.*;
@@ -136,10 +133,21 @@ public class TournamentServiceImpl implements TournamentService {
     public void processNewRound(UUID id) {
         var tournament = getTournamentById(id);
         var newRoundsGenerated = this.bracketService.generateNewRoundForTournament(tournament);
-        if (!newRoundsGenerated)
-        {
+        if (!newRoundsGenerated) {
             finishTournament(id);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<UUID> getTournamentTeamsById(UUID id) {
+        LOG.info("Get tournament teams by id: {}", id);
+        return getTournamentById(id).getTeams()
+                .stream()
+                .map(TeamRelationship::getTeam)
+                .collect(Collectors.toList());
     }
 
     private void finishTournament(UUID id) {
