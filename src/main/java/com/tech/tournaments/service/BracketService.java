@@ -10,4 +10,11 @@ public interface BracketService {
      * @return сетка
      */
     Bracket generateBracketForTournament(Tournament tournament);
+
+    /**
+     * Генерация нового раунда для турнира
+     * @param tournament турнир
+     * @return создались ли новые матчи
+     */
+    boolean generateNewRoundForTournament(Tournament tournament);
 }

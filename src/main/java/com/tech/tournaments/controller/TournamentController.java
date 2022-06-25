@@ -6,6 +6,7 @@ import com.tech.tournaments.service.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +38,17 @@ public class TournamentController {
     @GetMapping("/{id}")
     public Tournament getInfo(@PathVariable UUID id) {
         return this.tournamentService.getTournamentById(id);
+    }
+
+    /**
+     * Получение информации о командах по ИД
+     *
+     * @param id - ид турнира
+     * @return - информация о командах в турнире
+     */
+    @GetMapping("/{id}/teams")
+    public List<UUID> getTeamsInfo(@PathVariable UUID id) {
+        return this.tournamentService.getTournamentTeamsById(id);
     }
 
     /**
