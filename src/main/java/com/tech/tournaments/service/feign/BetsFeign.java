@@ -14,7 +14,7 @@ public interface BetsFeign
      *
      * @param matchResult информация о результате матча
      */
-    @PostMapping("/results/match")
+    @PostMapping("/route/route/update/match")
     void sendMatchResult(@RequestBody MatchResult matchResult);
 
     /**
@@ -22,6 +22,6 @@ public interface BetsFeign
      *
      * @param tournamentResult информация о результате турнира
      */
-    @PostMapping("/results/tournament")
+    @PostMapping("/route/route/update/tournament")
     void sendTournamentResult(@RequestBody TournamentResult tournamentResult);
 }

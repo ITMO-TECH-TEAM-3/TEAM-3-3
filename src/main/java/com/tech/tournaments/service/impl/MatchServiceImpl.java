@@ -159,7 +159,12 @@ public class MatchServiceImpl implements MatchService {
         var bracket = match.getBracket();
 
         var matchResult = createMatchResult(id, matchResultDto);
-        this.betsFeign.sendMatchResult(matchResult);
+        try {
+            this.betsFeign.sendMatchResult(matchResult);
+        } catch (Exception e)
+        {
+            LOG.warn("Failed to send info to Bets service");
+        }
 
         var allMatchesFinished = bracket.getMatches()
                 .stream()
