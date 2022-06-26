@@ -176,7 +176,13 @@ public class TournamentServiceImpl implements TournamentService {
                 .winnerId(winner)
                 .build();
         tournamentResultRepository.save(tournamentResult);
-        betsFeign.sendTournamentResult(tournamentResult);
+
+        try {
+            betsFeign.sendTournamentResult(tournamentResult);
+        } catch (Exception e)
+        {
+            LOG.warn("Failed to send info to Bets service");
+        }
     }
 
     private Optional<UUID> determineWinner(Tournament tournament) {
