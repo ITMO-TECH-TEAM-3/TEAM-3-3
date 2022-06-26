@@ -8,8 +8,10 @@ import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.repository.BracketRepository;
 import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.MatchService;
+import com.tech.tournaments.service.TournamentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -21,12 +23,15 @@ import static com.tech.tournaments.model.enums.TournamentType.SINGLE_ELIMINATION
 @Slf4j
 public class BracketServiceImpl implements BracketService {
 
+    private final TournamentService tournamentService;
     private final MatchService matchService;
     private final BracketRepository bracketRepository;
 
     @Autowired
-    public BracketServiceImpl(MatchService matchService,
+    public BracketServiceImpl(@Lazy TournamentService tournamentService,
+                              MatchService matchService,
                               BracketRepository bracketRepository) {
+        this.tournamentService = tournamentService;
         this.matchService = matchService;
         this.bracketRepository = bracketRepository;
     }
@@ -87,13 +92,13 @@ public class BracketServiceImpl implements BracketService {
         var matchDto = MatchDto.builder()
                 .bracket(bracket)
                 .build();
-        var teams = tournament.getTeams();
+        var teams = this.tournamentService.getTournamentTeamsById(tournament.getId());
         switch (bracket.getTournamentType()) {
             case SINGLE_ELIMINATION:
                 matchDto.setRound(1);
                 for (int i = 0; i < teams.size() - 1; i += 2) {
-                    matchDto.setTeam1Id(teams.get(i).getTeam());
-                    matchDto.setTeam2Id(teams.get(i + 1).getTeam());
+                    matchDto.setTeam1Id(teams.get(i));
+                    matchDto.setTeam2Id(teams.get(i + 1));
                     this.matchService.createNewMatch(matchDto);
                 }
                 break;
@@ -101,8 +106,8 @@ public class BracketServiceImpl implements BracketService {
                 int round = 1;
                 for (int i = 0; i < teams.size() - 1; i++) {
                     for (int j = i + 1; j < teams.size(); j++) {
-                        matchDto.setTeam1Id(teams.get(i).getTeam());
-                        matchDto.setTeam2Id(teams.get(j).getTeam());
+                        matchDto.setTeam1Id(teams.get(i));
+                        matchDto.setTeam2Id(teams.get(j));
                         matchDto.setRound(round++);
                         this.matchService.createNewMatch(matchDto);
                     }
