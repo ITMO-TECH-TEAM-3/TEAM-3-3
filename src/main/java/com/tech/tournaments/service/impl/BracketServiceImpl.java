@@ -1,11 +1,10 @@
 package com.tech.tournaments.service.impl;
 
-import com.tech.tournaments.model.Bracket;
-import com.tech.tournaments.model.Match;
-import com.tech.tournaments.model.MatchResult;
-import com.tech.tournaments.model.Tournament;
+import com.tech.tournaments.model.*;
 import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.repository.BracketRepository;
+import com.tech.tournaments.repository.MatchRepository;
+import com.tech.tournaments.repository.TeamRelationshipRepository;
 import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.MatchService;
 import com.tech.tournaments.service.TournamentService;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.tech.tournaments.model.enums.TournamentType.ROUND_ROBIN;
@@ -26,14 +27,26 @@ public class BracketServiceImpl implements BracketService {
     private final TournamentService tournamentService;
     private final MatchService matchService;
     private final BracketRepository bracketRepository;
+    private final MatchRepository matchRepository;
 
     @Autowired
     public BracketServiceImpl(@Lazy TournamentService tournamentService,
                               MatchService matchService,
-                              BracketRepository bracketRepository) {
+                              BracketRepository bracketRepository,
+                              MatchRepository matchRepository) {
         this.tournamentService = tournamentService;
         this.matchService = matchService;
         this.bracketRepository = bracketRepository;
+        this.matchRepository = matchRepository;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Match> getBracketMatchesById(UUID id) {
+        LOG.info("Get bracket matches by bracket id: {}", id);
+        return matchRepository.findByBracketId(id);
     }
 
     /**
