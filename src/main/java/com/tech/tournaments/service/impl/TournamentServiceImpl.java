@@ -38,7 +38,7 @@ public class TournamentServiceImpl implements TournamentService {
     public TournamentServiceImpl(TournamentRepository tournamentRepository,
                                  TournamentResultRepository tournamentResultRepository,
                                  TeamRelationshipRepository teamRelationshipRepository,
-                                 BracketService bracketService,
+                                 @Lazy BracketService bracketService,
                                  @Lazy MatchService matchService,
                                  BetsFeign betsFeign) {
         this.tournamentRepository = tournamentRepository;
@@ -144,7 +144,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public List<UUID> getTournamentTeamsById(UUID id) {
         LOG.info("Get tournament teams by id: {}", id);
-        return getTournamentById(id).getTeams()
+        return teamRelationshipRepository.findByTournamentId(id)
                 .stream()
                 .map(TeamRelationship::getTeam)
                 .collect(Collectors.toList());
