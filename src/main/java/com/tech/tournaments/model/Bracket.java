@@ -13,8 +13,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="bracket", schema = "public",
-        indexes = {@Index(columnList="tournament_id", unique = true)})
+@Table(name="bracket", schema = "public")
 public class Bracket {
     /**
      * ИД сетки
@@ -22,14 +21,7 @@ public class Bracket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    /**
-     * ИД турнира
-     */
-    @ToString.Exclude
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="tournament_id")
-    private Tournament tournament;
+
     /**
      * Тип турнира (и сетки)
      */

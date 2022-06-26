@@ -33,13 +33,6 @@ public class MatchResult {
     private UUID winnerId;
 
     /**
-     * id матча
-     */
-    @OneToOne
-    @JoinColumn(name="match_id")
-    private Match match;
-
-    /**
      * счёт первой команды
      */
     private int score1;

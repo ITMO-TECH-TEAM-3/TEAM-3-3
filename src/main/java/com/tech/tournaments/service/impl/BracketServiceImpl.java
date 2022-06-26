@@ -56,7 +56,6 @@ public class BracketServiceImpl implements BracketService {
     public Bracket generateBracketForTournament(Tournament tournament) {
         LOG.info("Generate bracket for a tournament: {}", tournament);
         var bracket = Bracket.builder()
-                .tournament(tournament)
                 .tournamentType(tournament.getTournamentType())
                 .build();
         bracket = this.bracketRepository.save(bracket);
