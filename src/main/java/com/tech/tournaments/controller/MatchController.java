@@ -77,6 +77,26 @@ public class MatchController {
     }
 
     /**
+     * Начало матча
+     *
+     * @param id - id матча
+     */
+    @PutMapping("/{id}/start")
+    public void startMatch(@PathVariable UUID id) {
+        this.matchService.startMatch(id);
+    }
+
+    /**
+     * Отмена матча
+     *
+     * @param id - id матча
+     */
+    @PutMapping("/{id}/cancel")
+    public void cancelMatch(@PathVariable UUID id) {
+        this.matchService.cancelMatch(id);
+    }
+
+    /**
      * Завершение матча
      *
      * @param id - id матча

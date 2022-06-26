@@ -25,7 +25,7 @@ public class TeamRelationship {
      */
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name="tournament_id")
     private Tournament tournament;
 
