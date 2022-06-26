@@ -154,10 +154,12 @@ public class MatchServiceImpl implements MatchService {
     public void finishMatch(UUID id, MatchResultDto matchResultDto) {
         LOG.info("Finish a match {}, {}", id, matchResultDto);
         var match = getMatchById(id);
+        match.setMatchStatus(FINISHED);
+        this.matchRepository.save(match);
         var bracket = match.getBracket();
 
         var matchResult = createMatchResult(id, matchResultDto);
-        betsFeign.sendMatchResult(matchResult);
+        this.betsFeign.sendMatchResult(matchResult);
 
         var allMatchesFinished = bracket.getMatches()
                 .stream()
@@ -168,7 +170,7 @@ public class MatchServiceImpl implements MatchService {
         }
     }
 
-    private MatchResult createMatchResult(UUID matchId, MatchResultDto matchResultDto)
+    public MatchResult createMatchResult(UUID matchId, MatchResultDto matchResultDto)
     {
         LOG.info("Create result for match: {}", matchId);
         var matchResult = MatchResult.builder()

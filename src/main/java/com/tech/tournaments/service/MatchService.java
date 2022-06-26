@@ -74,4 +74,6 @@ public interface MatchService {
      * @param matchResultDto - информация о результате матча
      */
     void finishMatch(UUID id, MatchResultDto matchResultDto);
+
+    public MatchResult createMatchResult(UUID matchId, MatchResultDto matchResultDto);
 }
