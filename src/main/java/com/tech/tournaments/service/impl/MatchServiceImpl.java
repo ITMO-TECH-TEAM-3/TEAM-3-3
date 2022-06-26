@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.tech.tournaments.model.enums.MatchStatus.CANCELLED;
 import static com.tech.tournaments.model.enums.MatchStatus.FINISHED;
@@ -55,7 +56,13 @@ public class MatchServiceImpl implements MatchService {
                 .bracket(matchDto.getBracket())
                 .matchStatus(MatchStatus.PENDING)
                 .build();
-        return this.matchRepository.save(match);
+
+        try {
+            return this.matchRepository.save(match);
+        } catch (Exception e) {
+            LOG.error("Failed to create match: {}", e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -74,8 +81,10 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getMatchesByDate(LocalDate date) {
         LOG.info("Get matches by date {}", date);
-        // todo: implement logic
-        return null;
+        return this.matchRepository.findAll()
+                .stream()
+                .filter(match -> match.getStartDateTime().toLocalDate().equals(date))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -84,8 +93,10 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getMatchesByTournamentId(UUID id) {
         LOG.info("Get matches by tournament id {}", id);
-        // todo: implement logic
-        return null;
+        return this.matchRepository.findAll()
+                .stream()
+                .filter(match -> match.getBracket().getTournament().getId().equals(id))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -94,8 +105,8 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public MatchResult getResultById(UUID id) {
         LOG.info("Get result by id {}", id);
-        // todo: implement logic
-        return null;
+        return this.matchResultRepository.findById(id)
+                .orElseThrow();
     }
 
     /**
@@ -104,8 +115,12 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public MatchResult getResultByMatchId(UUID matchId) {
         LOG.info("Get result by match id {}", matchId);
-        // todo: implement logic
-        return null;
+        return this.matchResultRepository.findById(
+                this.matchRepository.findById(matchId)
+                        .orElseThrow()
+                        .getResult()
+                        .getId())
+                .orElseThrow();
     }
 
     /**
