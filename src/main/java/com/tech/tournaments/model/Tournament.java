@@ -49,6 +49,9 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private TournamentStatus tournamentStatus;
 
-    @OneToOne(mappedBy="tournament")
+    @OneToOne()
     private Bracket bracket;
+
+    @OneToOne()
+    private TournamentResult tournamentResult;
 }

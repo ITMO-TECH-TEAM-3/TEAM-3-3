@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -92,10 +93,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getMatchesByTournamentId(UUID id) {
         LOG.info("Get matches by tournament id {}", id);
-        return this.matchRepository.findAll()
-                .stream()
-                .filter(match -> match.getBracket().getTournament().getId().equals(id))
-                .collect(Collectors.toList());
+        return this.matchRepository.findByBracketId(this.tournamentService.getTournamentById(id).getBracket().getId());
     }
 
     /**
@@ -143,6 +141,9 @@ public class MatchServiceImpl implements MatchService {
     public void cancelMatch(UUID id) {
         LOG.info("Start a match {}", id);
         var match = getMatchById(id);
+        if (match.getMatchStatus() != CANCELLED) {
+            throw new RuntimeException("Can't cancel cancelled match");
+        }
         match.setMatchStatus(CANCELLED);
         this.matchRepository.save(match);
     }
@@ -154,11 +155,15 @@ public class MatchServiceImpl implements MatchService {
     public void finishMatch(UUID id, MatchResultDto matchResultDto) {
         LOG.info("Finish a match {}, {}", id, matchResultDto);
         var match = getMatchById(id);
+        if (match.getMatchStatus() != ONGOING) {
+            throw new RuntimeException("Can't finish non-ongoing match");
+        }
         match.setMatchStatus(FINISHED);
-        this.matchRepository.save(match);
         var bracket = match.getBracket();
 
-        var matchResult = createMatchResult(id, matchResultDto);
+        var matchResult = createMatchResult(match, matchResultDto);
+        match.setResult(matchResult);
+        this.matchRepository.save(match);
         try {
             this.betsFeign.sendMatchResult(matchResult);
         } catch (Exception e)
@@ -171,15 +176,15 @@ public class MatchServiceImpl implements MatchService {
                 .map(Match::getMatchStatus)
                 .allMatch(r -> r == FINISHED || r == CANCELLED);
         if (allMatchesFinished) {
-            this.tournamentService.processNewRound(match.getBracket().getTournament().getId());
+            this.tournamentService.processNewRound(
+                    this.tournamentService.getTournamentByBracketId(match.getBracket().getId()).getId());
         }
     }
 
-    public MatchResult createMatchResult(UUID matchId, MatchResultDto matchResultDto)
+    private MatchResult createMatchResult(Match match, MatchResultDto matchResultDto)
     {
-        LOG.info("Create result for match: {}", matchId);
+        LOG.info("Create result for match: {}", match.getId());
         var matchResult = MatchResult.builder()
-                .id(matchId)
                 .isDraw(matchResultDto.isDraw())
                 .score1(matchResultDto.getScore1())
                 .score2(matchResultDto.getScore2())

@@ -30,7 +30,6 @@ public class Match {
      * id результата
      */
     @OneToOne(cascade=CascadeType.PERSIST)
-    @JoinColumn(name="result_id")
     private MatchResult result;
 
     /**

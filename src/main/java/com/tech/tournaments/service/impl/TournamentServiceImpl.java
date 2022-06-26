@@ -87,6 +87,15 @@ public class TournamentServiceImpl implements TournamentService {
      * {@inheritDoc}
      */
     @Override
+    public Tournament getTournamentByBracketId(UUID id) {
+        LOG.info("Get tournament by id: {}", id);
+        return this.tournamentRepository.findTournamentByBracketId(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addTeamInTournament(UUID id, UUID teamId) {
         LOG.info("Add team {} in tournament by id: {}", teamId, id);
 
@@ -126,8 +135,9 @@ public class TournamentServiceImpl implements TournamentService {
         LOG.info("Start tournament by id: {}", id);
         var entity = getTournamentById(id);
         entity.setTournamentStatus(ONGOING);
+        var bracket = this.bracketService.generateBracketForTournament(entity);
+        entity.setBracket(bracket);
         this.tournamentRepository.save(entity);
-        this.bracketService.generateBracketForTournament(entity);
     }
 
     /**
@@ -172,14 +182,14 @@ public class TournamentServiceImpl implements TournamentService {
             return;
         }
         entity.setTournamentStatus(FINISHED);
-        this.tournamentRepository.save(entity);
         var winner = determineWinner(entity)
                 .orElseThrow();
         var tournamentResult = TournamentResult.builder()
-                .tournamentId(id)
                 .winnerId(winner)
                 .build();
         tournamentResultRepository.save(tournamentResult);
+        entity.setTournamentResult(tournamentResult);
+        this.tournamentRepository.save(entity);
 
         try {
             betsFeign.sendTournamentResult(tournamentResult);
@@ -206,8 +216,6 @@ public class TournamentServiceImpl implements TournamentService {
             winner = matches.stream()
                     .max(Comparator.comparing(Match::getRound))
                     .map(Match::getResult)
-                    .map(MatchResult::getId)
-                    .map(this.matchService::getResultByMatchId)
                     .map(MatchResult::getWinnerId);
         }
         LOG.info("Determined winner {} for tournament {}", winner, tournament.getId());
