@@ -41,10 +41,7 @@ class MatchServiceTests {
         );
         assertThat(tournament).isNotNull();
         var teams = List.of(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-        this.tournamentService.addTeamInTournament(tournament.getId(), teams.get(0));
-        this.tournamentService.addTeamInTournament(tournament.getId(), teams.get(1));
-        this.tournamentService.addTeamInTournament(tournament.getId(), teams.get(2));
-        this.tournamentService.addTeamInTournament(tournament.getId(), teams.get(3));
+        teams.forEach(id -> this.tournamentService.addTeamInTournament(tournament.getId(), id));
         var bracket = this.bracketService.generateBracketForTournament(tournament);
         assertThat(bracket).isNotNull();
         assertThat(this.bracketService.getBracketMatchesById(bracket.getId()).size()).isEqualTo(2);
