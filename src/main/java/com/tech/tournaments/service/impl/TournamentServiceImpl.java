@@ -10,6 +10,7 @@ import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.MatchService;
 import com.tech.tournaments.service.TournamentService;
 import com.tech.tournaments.service.feign.BetsFeign;
+import com.tech.tournaments.service.feign.UsersFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -33,6 +34,7 @@ public class TournamentServiceImpl implements TournamentService {
     private final BracketService bracketService;
     private final MatchService matchService;
     private final BetsFeign betsFeign;
+    private final UsersFeign usersFeign;
 
     @Autowired
     public TournamentServiceImpl(TournamentRepository tournamentRepository,
@@ -40,14 +42,15 @@ public class TournamentServiceImpl implements TournamentService {
                                  TeamRelationshipRepository teamRelationshipRepository,
                                  @Lazy BracketService bracketService,
                                  @Lazy MatchService matchService,
-                                 BetsFeign betsFeign) {
+                                 BetsFeign betsFeign,
+                                 UsersFeign usersFeign) {
         this.tournamentRepository = tournamentRepository;
         this.tournamentResultRepository = tournamentResultRepository;
         this.teamRelationshipRepository = teamRelationshipRepository;
         this.bracketService = bracketService;
         this.matchService = matchService;
         this.betsFeign = betsFeign;
-
+        this.usersFeign = usersFeign;
     }
 
     /**
@@ -86,6 +89,14 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public void addTeamInTournament(UUID id, UUID teamId) {
         LOG.info("Add team {} in tournament by id: {}", teamId, id);
+
+        try {
+            var existTeam = this.usersFeign.getTeamInfo(teamId);
+        } catch (Exception e)
+        {
+            LOG.warn("Team does not exist in users service");
+        }
+
         var teamRelationship = TeamRelationship.builder()
                 .tournament(getTournamentById(id))
                 .team(teamId)

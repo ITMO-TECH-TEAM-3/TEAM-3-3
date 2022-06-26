@@ -6,7 +6,6 @@ import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +59,13 @@ public interface MatchService {
      * @param id - id матча
      */
     void startMatch(UUID id);
+
+    /**
+     * Отмена матча
+     *
+     * @param id - id матча
+     */
+    void cancelMatch(UUID id);
 
     /**
      * Завершение матча
