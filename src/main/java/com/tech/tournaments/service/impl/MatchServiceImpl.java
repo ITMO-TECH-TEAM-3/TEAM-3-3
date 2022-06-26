@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.tech.tournaments.model.enums.MatchStatus.CANCELLED;
-import static com.tech.tournaments.model.enums.MatchStatus.FINISHED;
+import static com.tech.tournaments.model.enums.MatchStatus.*;
 
 @Service
 @Slf4j
@@ -129,7 +128,23 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public void startMatch(UUID id) {
         LOG.info("Start a match {}", id);
-        // todo: implement logic
+        var match = getMatchById(id);
+        if (match.getMatchStatus() != PENDING) {
+            throw new RuntimeException("Match is not in pending state");
+        }
+        match.setMatchStatus(ONGOING);
+        this.matchRepository.save(match);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cancelMatch(UUID id) {
+        LOG.info("Start a match {}", id);
+        var match = getMatchById(id);
+        match.setMatchStatus(CANCELLED);
+        this.matchRepository.save(match);
     }
 
     /**
