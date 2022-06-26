@@ -90,10 +90,14 @@ public class TournamentServiceImpl implements TournamentService {
     public void addTeamInTournament(UUID id, UUID teamId) {
         LOG.info("Add team {} in tournament by id: {}", teamId, id);
 
+        var tournament = getTournamentById(id);
+        if (tournament.getTournamentStatus() != PENDING) {
+            throw new RuntimeException("Tournament is not in pending state");
+        }
+
         try {
             var existTeam = this.usersFeign.getTeamInfo(teamId);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.warn("Team does not exist in users service");
         }
 
@@ -176,7 +180,12 @@ public class TournamentServiceImpl implements TournamentService {
                 .winnerId(winner)
                 .build();
         tournamentResultRepository.save(tournamentResult);
-        betsFeign.sendTournamentResult(tournamentResult);
+
+        try {
+            betsFeign.sendTournamentResult(tournamentResult);
+        } catch (Exception e) {
+            LOG.warn("Failed to send info to Bets service");
+        }
     }
 
     private Optional<UUID> determineWinner(Tournament tournament) {
