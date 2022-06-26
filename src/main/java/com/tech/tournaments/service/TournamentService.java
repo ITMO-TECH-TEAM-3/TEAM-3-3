@@ -23,6 +23,13 @@ public interface TournamentService {
     Tournament getTournamentById(UUID id);
 
     /**
+     *
+     * @param id - bracket id
+     * @return - bracket
+     */
+    Tournament getTournamentByBracketId(UUID id);
+
+    /**
      * Добавление команды в турнир по ИД
      *
      * @param id     - ид турнира

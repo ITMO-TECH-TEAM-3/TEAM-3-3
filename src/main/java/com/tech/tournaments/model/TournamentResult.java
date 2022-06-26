@@ -26,9 +26,4 @@ public class TournamentResult {
      * id победителя
      */
     private UUID winnerId;
-
-    /**
-     * id турнира
-     */
-    private UUID tournamentId;
 }
