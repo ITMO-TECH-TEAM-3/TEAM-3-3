@@ -9,12 +9,16 @@ import com.tech.tournaments.repository.TournamentResultRepository;
 import com.tech.tournaments.service.BracketService;
 import com.tech.tournaments.service.MatchService;
 import com.tech.tournaments.service.TournamentService;
-import com.tech.tournaments.service.feign.BetsFeign;
 import com.tech.tournaments.service.feign.UsersFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -28,13 +32,16 @@ import static com.tech.tournaments.model.enums.TournamentType.SINGLE_ELIMINATION
 @Slf4j
 public class TournamentServiceImpl implements TournamentService {
 
+    @Value("${service.bets.url}")
+    private String betsUrl;
+
     private final TournamentRepository tournamentRepository;
     private final TournamentResultRepository tournamentResultRepository;
     private final TeamRelationshipRepository teamRelationshipRepository;
     private final BracketService bracketService;
     private final MatchService matchService;
-    private final BetsFeign betsFeign;
     private final UsersFeign usersFeign;
+    private final RestTemplate restTemplate;
 
     @Autowired
     public TournamentServiceImpl(TournamentRepository tournamentRepository,
@@ -42,15 +49,15 @@ public class TournamentServiceImpl implements TournamentService {
                                  TeamRelationshipRepository teamRelationshipRepository,
                                  @Lazy BracketService bracketService,
                                  @Lazy MatchService matchService,
-                                 BetsFeign betsFeign,
-                                 UsersFeign usersFeign) {
+                                 UsersFeign usersFeign,
+                                 RestTemplate restTemplate) {
         this.tournamentRepository = tournamentRepository;
         this.tournamentResultRepository = tournamentResultRepository;
         this.teamRelationshipRepository = teamRelationshipRepository;
         this.bracketService = bracketService;
         this.matchService = matchService;
-        this.betsFeign = betsFeign;
         this.usersFeign = usersFeign;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -192,7 +199,10 @@ public class TournamentServiceImpl implements TournamentService {
         this.tournamentRepository.save(entity);
 
         try {
-            betsFeign.sendTournamentResult(tournamentResult);
+            this.restTemplate.exchange(String.format("%s/route/update/tournament?tournamentId=%s&winnerTeamId=%s", betsUrl, id, tournamentResult.getWinnerId()),
+                    HttpMethod.PATCH,
+                    new HttpEntity<>(new Object(), new HttpHeaders()),
+                    Void.class);
         } catch (Exception e) {
             LOG.warn("Failed to send info to Bets service");
         }

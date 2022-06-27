@@ -5,18 +5,22 @@ import com.tech.tournaments.model.MatchResult;
 import com.tech.tournaments.model.dto.MatchDto;
 import com.tech.tournaments.model.dto.MatchResultDto;
 import com.tech.tournaments.model.enums.MatchStatus;
+import com.tech.tournaments.model.external.MatchResultExt;
 import com.tech.tournaments.repository.MatchRepository;
 import com.tech.tournaments.repository.MatchResultRepository;
 import com.tech.tournaments.service.MatchService;
 import com.tech.tournaments.service.TournamentService;
-import com.tech.tournaments.service.feign.BetsFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,20 +31,23 @@ import static com.tech.tournaments.model.enums.MatchStatus.*;
 @Slf4j
 public class MatchServiceImpl implements MatchService {
 
+    @Value("${service.bets.url}")
+    private String betsUrl;
+
     private final MatchRepository matchRepository;
     private final MatchResultRepository matchResultRepository;
     private final TournamentService tournamentService;
-    private final BetsFeign betsFeign;
+    private final RestTemplate restTemplate;
 
     @Autowired
     public MatchServiceImpl(MatchRepository matchRepository,
                             @Lazy TournamentService tournamentService,
                             MatchResultRepository matchResultRepository,
-                            BetsFeign betsFeign) {
+                            RestTemplate restTemplate) {
         this.matchRepository = matchRepository;
         this.tournamentService = tournamentService;
         this.matchResultRepository = matchResultRepository;
-        this.betsFeign = betsFeign;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -165,7 +172,14 @@ public class MatchServiceImpl implements MatchService {
         match.setResult(matchResult);
         this.matchRepository.save(match);
         try {
-            this.betsFeign.sendMatchResult(matchResult);
+            var matchResultExt = MatchResultExt.builder()
+                    .isDraw(matchResult.isDraw())
+                    .winnerTeamId(matchResult.getWinnerId())
+                    .build();
+            restTemplate.exchange(String.format("%s/route/update/match?matchId=%s", betsUrl, match.getId()),
+                    HttpMethod.PATCH,
+                    new HttpEntity<>(matchResultExt, new HttpHeaders()),
+                    Void.class);
         } catch (Exception e)
         {
             LOG.warn("Failed to send info to Bets service");
