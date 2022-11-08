@@ -173,3 +173,6 @@
 | ```LocalDateTime startDateTime``` | дата и время начала матча |
 | ```UUID team1Id``` | id первой команды |
 | ```UUID team2Id``` | id второй команды |
+
+
+check trello
