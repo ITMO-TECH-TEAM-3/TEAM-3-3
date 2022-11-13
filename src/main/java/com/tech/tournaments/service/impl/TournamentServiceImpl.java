@@ -1,6 +1,10 @@
 package com.tech.tournaments.service.impl;
 
-import com.tech.tournaments.model.*;
+import com.tech.tournaments.model.Match;
+import com.tech.tournaments.model.MatchResult;
+import com.tech.tournaments.model.TeamRelationship;
+import com.tech.tournaments.model.Tournament;
+import com.tech.tournaments.model.TournamentResult;
 import com.tech.tournaments.model.dto.TournamentDto;
 import com.tech.tournaments.model.enums.TournamentStatus;
 import com.tech.tournaments.repository.TeamRelationshipRepository;
@@ -21,7 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.tech.tournaments.model.enums.TournamentStatus.*;
