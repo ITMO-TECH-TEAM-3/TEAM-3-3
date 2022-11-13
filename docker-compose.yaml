@@ -16,7 +16,7 @@ services:
     image: mdillon/postgis:9.2-alpine
     platform: linux/arm64
     ports:
-      - '5432:5432'
+      - '5433:5432'
     networks:
       - network
     #    volumes:
