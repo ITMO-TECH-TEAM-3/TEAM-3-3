@@ -1,0 +1,11 @@
+com.tech.tournaments
+com.tech.tournaments.configuration
+com.tech.tournaments.controller
+com.tech.tournaments.model
+com.tech.tournaments.model.dto
+com.tech.tournaments.model.enums
+com.tech.tournaments.model.external
+com.tech.tournaments.repository
+com.tech.tournaments.service
+com.tech.tournaments.service.feign
+com.tech.tournaments.service.impl
